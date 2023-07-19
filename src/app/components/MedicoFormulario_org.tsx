@@ -8,6 +8,7 @@ interface Especialidad {
 }
 
 interface Medico{
+    tarjetaProfesional:number;
     nombre:string;
     apellido:string;
     consultorio:string;
@@ -24,11 +25,13 @@ const MedicoFormulario =()=>{
         e.preventDefault()
 
         const miMedico:Medico = {
+            tarjetaProfesional:e.target.tarjetaProfesional.value,
             nombre:e.target.nombre.value,
             apellido:e.target.apellido.value,
             consultorio:e.target.consultorio.value,
             correo:e.target.correo.value,
             especialidad:e.target.especialidad.value
+
         }
 
         console.log(miMedico)
@@ -54,9 +57,13 @@ const MedicoFormulario =()=>{
                 headers:{
                     "Content-type":"text/uri-list"
                 },
-                body:miMedico.especialidad
+                body:JSON.stringify(miMedico.especialidad)
             })
-                    
+
+             data =await response.json()
+
+             console.log(data)
+
             e.target.reset()
 
             setSubmitted(true)
@@ -100,6 +107,10 @@ const MedicoFormulario =()=>{
             <input type="text" 
             name="consultorio"
             placeholder="Consultorio"/>
+            <input type="text" 
+            name="tarjetaProfesional"
+            placeholder="Tarjeta Profesional"/>
+            
             <select 
             name="especialidad"
             >

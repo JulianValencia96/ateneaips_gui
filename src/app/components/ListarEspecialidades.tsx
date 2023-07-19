@@ -21,14 +21,14 @@ const ListarEspecialidades:React.FC<EspecialidadProps> = ({especialidades}) =>{
     return(
         <table>
             <thead>
-
-            </thead>
-            <tbody>
-
             <tr>
                 <td><h3>Nombre Especialidad</h3></td>
             </tr>
 
+            </thead>
+            <tbody>
+
+           
                 {
                     especialidades.map((especialidad, index)=>{
                         return(

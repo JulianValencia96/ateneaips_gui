@@ -31,6 +31,34 @@ const CitaFormulario =()=>{
     const [pacientes, setPacientes] = useState<Paciente[]>([])
     const [medicos, setMedicos] = useState<Medico[]>([])
 
+    const handleSubmit=async(e:any)=>{
+        e.preventDefault()
+
+        const cita:Cita={
+            paciente: e.target.paciente.value,
+            medico: e.target.medico.value,
+            fecha: e.target.fecha.value
+            
+            }
+        try {
+            
+            const response = await fetch("http://localhost:8080/citas",{
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body: JSON.stringify(cita)
+                
+            })
+
+            e.target.reset()
+
+            const data = await response.json()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     useEffect(
         ()=>{
             const fetchMedicos = async()=>{
@@ -63,7 +91,7 @@ const CitaFormulario =()=>{
 
             return(
                 <div>
-                    <form>
+                    <form onSubmit={handleSubmit}>
 
                     <select 
             name="medico"

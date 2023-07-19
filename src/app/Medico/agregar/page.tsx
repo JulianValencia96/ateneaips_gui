@@ -1,6 +1,6 @@
 "use client"
 
-import MedicoFormulario from "@/app/components/MedicoFormulario";
+import MedicoFormulario from "@/app/components/MedicoFormulario_org";
 
 
 export default function PaginaAgregarMedicos(){
