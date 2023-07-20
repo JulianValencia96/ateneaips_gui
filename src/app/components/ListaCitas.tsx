@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 
 
 interface Cita{
-    _links:Record<string, {href:string}>
-    fecha:string;
+    fecha: string | null;
+    medico: Medico;
+    paciente: Paciente;
  
 }
 
@@ -27,10 +28,44 @@ const TablaCita=()=>{
                 try {
                     const response = await fetch("http://localhost:8080/citas")
                     const data = await response.json()
-                    setCitas(data._embedded.citas)
-                    console.log(citas)
+
+                    //Codigo base - entregable_frontEnd
+
+                    const citaData = [];
+                    for (const cita of data._embedded.citas) {
+                      const medicoResponse = await fetch(cita._links.medico.href);
+                      if (!medicoResponse.ok) {
+                        continue
+                      }
+                      
+                      
+                      const medicoData = await medicoResponse.json();
+            
+                      console.log(medicoData);
+            
+                      const pacienteResponse = await fetch(cita._links.paciente.href);
+                      const pacienteData = await pacienteResponse.json();
+                      
+            
+                      citaData.push({
+                        medico: medicoData,
+                        paciente: pacienteData,
+                        fecha: cita.fecha,
+                      });
+                    }
+            
+                    setCitas(citaData);
+            
+
+
+
+
+                    //####################################
+
+                    /*setCitas(data._embedded.citas)
+                    console.log(citas) */
                 } catch (error) {
-                    console.error(error)
+                    console.error('Error fetching data:', error);
                 }
             };
 
@@ -59,8 +94,8 @@ const TablaCita=()=>{
 
                         
                     <tr key={index}>
-                        <td>{cita._links.medico.href}</td>
-                        <td>{cita._links.paciente.href}</td>
+                        <td>{cita.medico.nombre}</td>
+                        <td>{cita.paciente.nombre}</td>
                         <td>{cita.fecha}</td>
                     </tr>
                     ))

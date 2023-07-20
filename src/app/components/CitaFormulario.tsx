@@ -31,33 +31,10 @@ const CitaFormulario =()=>{
     const [pacientes, setPacientes] = useState<Paciente[]>([])
     const [medicos, setMedicos] = useState<Medico[]>([])
 
-    const handleSubmit=async(e:any)=>{
-        e.preventDefault()
+    //#######################################
 
-        const cita:Cita={
-            paciente: e.target.paciente.value,
-            medico: e.target.medico.value,
-            fecha: e.target.fecha.value
-            
-            }
-        try {
-            
-            const response = await fetch("http://localhost:8080/citas",{
-                method:"POST",
-                headers:{
-                    "Content-type":"application/json"
-                },
-                body: JSON.stringify(cita)
-                
-            })
+    const [submitted, setSubmitted] = useState(false);
 
-            e.target.reset()
-
-            const data = await response.json()
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
     useEffect(
         ()=>{
@@ -89,6 +66,68 @@ const CitaFormulario =()=>{
                 fetchPacientes();
             },[])
 
+
+
+    //#######################################
+
+
+
+
+    const handleSubmit=async(e:any)=>{
+        e.preventDefault()
+
+        const cita:Cita=({
+            paciente: e.target.paciente.value,
+            medico: e.target.medico.value,
+            fecha: e.target.fecha.value
+            
+            });
+
+
+        try {
+            
+            const response = await fetch("http://localhost:8080/citas",{
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body: JSON.stringify(cita)
+                
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+            if (response.ok) {
+                //Clear the form
+                e.target.reset();
+        
+                //Disable the submit button
+                e.target.disabled = true;
+        
+                setSubmitted(true); // Set the submitted state to true
+                setTimeout(() => {
+                  setSubmitted(false); // Reset the submitted state after 3 seconds
+                  //Redirect to the list of counselings
+                  window.location.href = "/citas/listar";          
+                }, 2000);
+              }
+
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
+    const getPacienteId = (paciente: string) => {
+        const pacienteHrefParts = paciente.split("/");
+        const pacienteId = pacienteHrefParts[pacienteHrefParts.length - 1];
+        return pacienteId;
+    };
+
+
+   
             return(
                 <div>
                     <form onSubmit={handleSubmit}>
@@ -98,8 +137,8 @@ const CitaFormulario =()=>{
             >
                 <option value="">Seleccione una Medico</option>
                 {
-                medicos.map((medico, index)=>(
-                <option key={index} value={medico._links.medico.href}>
+                medicos.map((medico)=>(
+                <option key={medico._links.medico.href} value={medico._links.medico.href}>
                     {medico.nombre}
                 </option>
 
@@ -115,8 +154,8 @@ const CitaFormulario =()=>{
             >
                 <option value="">Seleccione un Paciente</option>
                 {
-                pacientes.map((paciente, index)=>(
-                <option key={index} value={paciente._links.paciente.href}>
+                pacientes.map((paciente)=>(
+                <option key={paciente._links.paciente.href} value={paciente._links.paciente.href}>
                     {paciente.nombre}
                 </option>
 
@@ -134,6 +173,7 @@ const CitaFormulario =()=>{
 
                         <button type="submit">Guardar</button>
                     </form>
+                    {submitted && <div className="success-message">Record inserted successfully!</div>}
                 </div>
             )
 

@@ -1,46 +1,82 @@
-//Importaciones
+import { table } from "console";
+import { Tangerine } from "next/font/google";
+import { useEffect, useState } from "react";
 
-import { table } from "console"
 
-//Interfaz de Especialidad
-
-interface Especialidad{
-    nombre:string
+interface Especialidad {
+    nombre: string;
 }
 
-//interfaz para las especialidades
+
+const TablaEspecialidad = () => {
+
+    const [especialidad, setEspecialidades] = useState<Especialidad[]>([])
+
+    useEffect(
+        () => {
+            const fetchEspecialidades = async () => {
+                try {
+                    const response = await fetch("http://localhost:8080/especialidades")
+                    const data = await response.json()
+
+                    //Codigo base - entregable_frontEnd
+
+                    const especialidadData: any = [];
+                    //Error: Variable 'especialidadData' implicitly has type 'any[]' in some locations where its type cannot be determined.ts(7034)
+                    //Solucion: definir especialidadData como any
+                    for (const especialidad of data._embedded.especialidades) {
+
+                        especialidadData.push({
+
+                            nombre: especialidad.nombre,
+
+                        });
+                    }
+
+                    setEspecialidades(especialidadData);
 
 
-interface EspecialidadProps{
-    especialidades: Especialidad[]
-}
 
-//Componente FC. Listado de funcion map.
 
-const ListarEspecialidades:React.FC<EspecialidadProps> = ({especialidades}) =>{
-    return(
+
+                    //####################################
+
+                    /*setEspecialidades(data._embedded.especialidad)
+                    console.log(especialidad) */
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+
+            fetchEspecialidades();
+        }, [])
+
+    return (
         <table>
             <thead>
-            <tr>
-                <td><h3>Nombre Especialidad</h3></td>
-            </tr>
+                <tr>
+                 
+                    <th>
+                        Nombre Especialidad
+                    </th>
 
+                </tr>
             </thead>
             <tbody>
-
-           
                 {
-                    especialidades.map((especialidad, index)=>{
-                        return(
-                            <tr>
-                                <td>{especialidad.nombre}</td>
-                            </tr>
-                        )
-                    })
+                    especialidad.map((especialidad, index) => (
+
+
+                        <tr key={index}>
+                            
+                            <td>{especialidad.nombre}</td>
+                            
+                        </tr>
+                    ))
                 }
             </tbody>
         </table>
     )
 }
 
-export default ListarEspecialidades
+export default TablaEspecialidad

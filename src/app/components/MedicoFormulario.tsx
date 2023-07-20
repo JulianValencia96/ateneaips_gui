@@ -8,6 +8,8 @@ interface Especialidad {
 }
 
 interface Medico{
+
+    tarjetaProfesional:string;
     nombre:string;
     apellido:string;
     consultorio:string;
@@ -24,6 +26,7 @@ const MedicoFormulario =()=>{
         e.preventDefault()
 
         const miMedico:Medico = {
+            tarjetaProfesional:e.target.tarjetaProfesional.value,
             nombre:e.target.nombre.value,
             apellido:e.target.apellido.value,
             consultorio:e.target.consultorio.value,
@@ -57,11 +60,27 @@ const MedicoFormulario =()=>{
                 body:miMedico.especialidad
             })
                     
-            e.target.reset()
+        
 
-            setSubmitted(true)
+        /*    setSubmitted(true)
             setTimeout(()=>{
-                setSubmitted(false), 3000})
+                setSubmitted(false), 3000}) */
+
+                if (response.ok) {
+                    //Clear the form
+                    e.target.reset();
+            
+                    //Disable the submit button
+                    e.target.disabled = true;
+            
+                    setSubmitted(true); // Set the submitted state to true
+                    setTimeout(() => {
+                      setSubmitted(false); // Reset the submitted state after 3 seconds
+                      //Redirect to the list of counselings
+                      window.location.href = "/Medico/listar";          
+                    }, 2000);
+                  }
+    
             
         } catch (error) {
             console.error(error)
@@ -88,6 +107,9 @@ const MedicoFormulario =()=>{
 
     return(
         <form onSubmit={handleSubmit}>
+                <input type="text" 
+            name="tarjetaProfesional"
+            placeholder="Tarjeta Profesional"/>
             <input type="text" 
             name="nombre"
             placeholder="Nombre"/>
